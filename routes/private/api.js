@@ -217,8 +217,85 @@ function handlePrivateBackendApi(app) {
     }
   });
 
+  // 6) View All Available Trucks (customer)
+  // GET /api/v1/trucks/view
+  app.get('/api/v1/trucks/view', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'customer')) return;
 
+      const trucks = await db('FoodTruck.Trucks')
+        .where({ truckStatus: 'available', orderStatus: 'available' })
+        .orderBy('truckId', 'asc');
 
+      return res.status(200).json(trucks);
+    } catch (err) {
+      console.error('GET /trucks/view error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // 7) View My Truck Information (truckOwner)
+  // GET /api/v1/trucks/myTruck
+  app.get('/api/v1/trucks/myTruck', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'truckOwner')) return;
+
+      if (!user.truckId) {
+        return res.status(404).json({ error: 'Truck not found' });
+      }
+
+      const truck = await db('FoodTruck.Trucks')
+        .where({ truckId: user.truckId })
+        .first();
+
+      if (!truck) {
+        return res.status(404).json({ error: 'Truck not found' });
+      }
+
+      return res.status(200).json(truck);
+    } catch (err) {
+      console.error('GET /trucks/myTruck error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // 8) Update Truck Order Availability (truckOwner)
+  // PUT /api/v1/trucks/updateOrderStatus
+  app.put('/api/v1/trucks/updateOrderStatus', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'truckOwner')) return;
+
+      if (!user.truckId) {
+        return res.status(404).json({ error: 'Truck not found' });
+      }
+
+      const { orderStatus } = req.body || {};
+      if (!VALID_TRUCK_ORDER_STATUS.includes(orderStatus)) {
+        return res.status(400).json({ error: 'Invalid orderStatus' });
+      }
+
+      const updated = await db('FoodTruck.Trucks')
+        .where({ truckId: user.truckId })
+        .update({ orderStatus });
+
+      if (!updated) {
+        return res.status(404).json({ error: 'Truck not found' });
+      }
+
+      return res
+        .status(200)
+        .json({ message: 'truck order status updated successfully' });
+    } catch (err) {
+      console.error('PUT /trucks/updateOrderStatus error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
 
 
