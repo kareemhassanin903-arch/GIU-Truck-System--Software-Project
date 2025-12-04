@@ -297,8 +297,220 @@ function handlePrivateBackendApi(app) {
     }
   });
 
+  // 9) View Menu Items for a Specific Truck (customer)
+  // GET /api/v1/menuItem/truck/:truckId
+  app.get('/api/v1/menuItem/truck/:truckId', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'customer')) return;
 
+      const truckId = parseInt(req.params.truckId, 10);
+      if (isNaN(truckId)) {
+        return res.status(400).json({ error: 'Invalid truckId' });
+      }
 
+      const items = await db('FoodTruck.MenuItems')
+        .where({ truckId, status: 'available' })
+        .orderBy('itemId', 'asc');
+
+      return res.status(200).json(items);
+    } catch (err) {
+      console.error('GET /menuItem/truck/:truckId error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // 10) Search Menu Items by Category (customer)
+  // GET /api/v1/menuItem/truck/:truckId/category/:category
+  app.get(
+    '/api/v1/menuItem/truck/:truckId/category/:category',
+    async (req, res) => {
+      try {
+        const user = await requireUser(req, res);
+        if (!user) return;
+        if (!requireRole(user, res, 'customer')) return;
+
+        const truckId = parseInt(req.params.truckId, 10);
+        const category = req.params.category;
+        if (isNaN(truckId) || !category) {
+          return res.status(400).json({ error: 'Invalid parameters' });
+        }
+
+        const items = await db('FoodTruck.MenuItems')
+          .where({
+            truckId,
+            status: 'available',
+            category
+          })
+          .orderBy('itemId', 'asc');
+
+        return res.status(200).json(items);
+      } catch (err) {
+        console.error(
+          'GET /menuItem/truck/:truckId/category/:category error',
+          err
+        );
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+    }
+  );
+
+  // 11) Add Menu Item to Cart
+  // POST /api/v1/cart/new
+  app.post('/api/v1/cart/new', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'customer')) return;
+
+      const { itemId, quantity, price } = req.body || {};
+      const parsedItemId = parseInt(itemId, 10);
+      const parsedQty = parseInt(quantity, 10);
+
+      if (
+        isNaN(parsedItemId) ||
+        isNaN(parsedQty) ||
+        parsedQty <= 0 ||
+        price == null
+      ) {
+        return res.status(400).json({ error: 'Invalid cart data' });
+      }
+
+      // Get menu item & its truck
+      const menuItem = await db('FoodTruck.MenuItems')
+        .where({ itemId: parsedItemId, status: 'available' })
+        .first();
+
+      if (!menuItem) {
+        return res.status(404).json({ error: 'Menu item not found' });
+      }
+
+      const itemTruckId = menuItem.truckId;
+
+      // Check existing cart items' trucks
+      const existingCartItems = await db('FoodTruck.Carts as c')
+        .join('FoodTruck.MenuItems as m', 'c.itemId', 'm.itemId')
+        .where('c.userId', user.userId)
+        .select('m.truckId');
+
+      const hasDifferentTruck = existingCartItems.some(
+        (ci) => ci.truckId !== itemTruckId
+      );
+
+      if (hasDifferentTruck) {
+        // As per user story example they used "message" key here
+        return res
+          .status(400)
+          .json({ message: 'Cannot order from multiple trucks' });
+      }
+
+      await db('FoodTruck.Carts').insert({
+        userId: user.userId,
+        itemId: parsedItemId,
+        quantity: parsedQty,
+        price
+      });
+
+      return res
+        .status(200)
+        .json({ message: 'item added to cart successfully' });
+    } catch (err) {
+      console.error('POST /cart/new error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // 12) View Cart
+  // GET /api/v1/cart/view
+  app.get('/api/v1/cart/view', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'customer')) return;
+
+      const cartItems = await db('FoodTruck.Carts as c')
+        .join('FoodTruck.MenuItems as m', 'c.itemId', 'm.itemId')
+        .where('c.userId', user.userId)
+        .select(
+          'c.cartId',
+          'c.userId',
+          'c.itemId',
+          'm.name as itemName',
+          'c.price',
+          'c.quantity'
+        )
+        .orderBy('c.cartId', 'asc');
+
+      return res.status(200).json(cartItems);
+    } catch (err) {
+      console.error('GET /cart/view error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // 13) Delete Item from Cart
+  // DELETE /api/v1/cart/delete/:cartId
+  app.delete('/api/v1/cart/delete/:cartId', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'customer')) return;
+
+      const cartId = parseInt(req.params.cartId, 10);
+      if (isNaN(cartId)) {
+        return res.status(400).json({ error: 'Invalid cartId' });
+      }
+
+      const deleted = await db('FoodTruck.Carts')
+        .where({ cartId, userId: user.userId })
+        .del();
+
+      if (!deleted) {
+        return res.status(404).json({ error: 'Cart item not found' });
+      }
+
+      return res
+        .status(200)
+        .json({ message: 'item removed from cart successfully' });
+    } catch (err) {
+      console.error('DELETE /cart/delete/:cartId error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // 14) Edit Cart Item Quantity
+  // PUT /api/v1/cart/edit/:cartId
+  app.put('/api/v1/cart/edit/:cartId', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'customer')) return;
+
+      const cartId = parseInt(req.params.cartId, 10);
+      const { quantity } = req.body || {};
+      const parsedQty = parseInt(quantity, 10);
+
+      if (isNaN(cartId) || isNaN(parsedQty) || parsedQty <= 0) {
+        return res.status(400).json({ error: 'Invalid input' });
+      }
+
+      const updated = await db('FoodTruck.Carts')
+        .where({ cartId, userId: user.userId })
+        .update({ quantity: parsedQty });
+
+      if (!updated) {
+        return res.status(404).json({ error: 'Cart item not found' });
+      }
+
+      return res
+        .status(200)
+        .json({ message: 'cart updated successfully' });
+    } catch (err) {
+      console.error('PUT /cart/edit/:cartId error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
 
 
