@@ -44,12 +44,178 @@ function handlePrivateBackendApi(app) {
   });
 
 
+  // 1) Create a Menu Item (truckOwner)
+  // POST /api/v1/menuItem/new
+  app.post('/api/v1/menuItem/new', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'truckOwner')) return;
+
+      const { name, price, description, category } = req.body || {};
+
+      if (!name || price == null || !category) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      if (!user.truckId) {
+        return res.status(400).json({ error: 'Truck not found for this owner' });
+      }
+
+      await db('FoodTruck.MenuItems').insert({
+        truckId: user.truckId,
+        name,
+        price,
+        description,
+        category
+        // status & createdAt use defaults
+      });
+
+      return res
+        .status(200)
+        .json({ message: 'menu item was created successfully' });
+    } catch (err) {
+      console.error('POST /menuItem/new error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
 
+  // 2) View My Truck’s Menu Items (truckOwner)
+  // GET /api/v1/menuItem/view
+  app.get('/api/v1/menuItem/view', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'truckOwner')) return;
+
+      if (!user.truckId) {
+        return res.status(400).json({ error: 'Truck not found for this owner' });
+      }
+
+      const items = await db('FoodTruck.MenuItems')
+        .where({ truckId: user.truckId, status: 'available' })
+        .orderBy('itemId', 'asc');
+
+      return res.status(200).json(items);
+    } catch (err) {
+      console.error('GET /menuItem/view error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
 
+  // 3) View a Specific Menu Item (truckOwner)
+  // GET /api/v1/menuItem/view/:itemId
+  app.get('/api/v1/menuItem/view/:itemId', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'truckOwner')) return;
 
+      const itemId = parseInt(req.params.itemId, 10);
+      if (isNaN(itemId)) {
+        return res.status(400).json({ error: 'Invalid itemId' });
+      }
 
+      if (!user.truckId) {
+        return res.status(400).json({ error: 'Truck not found for this owner' });
+      }
+
+      const item = await db('FoodTruck.MenuItems')
+        .where({ itemId, truckId: user.truckId })
+        .first();
+
+      if (!item) {
+        return res.status(404).json({ error: 'Menu item not found' });
+      }
+
+      return res.status(200).json(item);
+    } catch (err) {
+      console.error('GET /menuItem/view/:itemId error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // 4) Edit a Menu Item (truckOwner)
+  // PUT /api/v1/menuItem/edit/:itemId
+  app.put('/api/v1/menuItem/edit/:itemId', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'truckOwner')) return;
+
+      const itemId = parseInt(req.params.itemId, 10);
+      if (isNaN(itemId)) {
+        return res.status(400).json({ error: 'Invalid itemId' });
+      }
+
+      if (!user.truckId) {
+        return res.status(400).json({ error: 'Truck not found for this owner' });
+      }
+
+      const { name, price, category, description } = req.body || {};
+      const updateData = {};
+
+      if (name != null) updateData.name = name;
+      if (price != null) updateData.price = price;
+      if (category != null) updateData.category = category;
+      if (description != null) updateData.description = description;
+
+      if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({ error: 'No fields to update' });
+      }
+
+      const updated = await db('FoodTruck.MenuItems')
+        .where({ itemId, truckId: user.truckId })
+        .update(updateData);
+
+      if (!updated) {
+        return res.status(404).json({ error: 'Menu item not found' });
+      }
+
+      return res
+        .status(200)
+        .json({ message: 'menu item updated successfully' });
+    } catch (err) {
+      console.error('PUT /menuItem/edit/:itemId error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // 5) Delete a Menu Item (truckOwner)
+  // DELETE /api/v1/menuItem/delete/:itemId
+  app.delete('/api/v1/menuItem/delete/:itemId', async (req, res) => {
+    try {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      if (!requireRole(user, res, 'truckOwner')) return;
+
+      const itemId = parseInt(req.params.itemId, 10);
+      if (isNaN(itemId)) {
+        return res.status(400).json({ error: 'Invalid itemId' });
+      }
+
+      if (!user.truckId) {
+        return res.status(400).json({ error: 'Truck not found for this owner' });
+      }
+
+      const updated = await db('FoodTruck.MenuItems')
+        .where({ itemId, truckId: user.truckId })
+        .update({ status: 'unavailable' });
+
+      if (!updated) {
+        return res.status(404).json({ error: 'Menu item not found' });
+      }
+
+      return res
+        .status(200)
+        .json({ message: 'menu item deleted successfully' });
+    } catch (err) {
+      console.error('DELETE /menuItem/delete/:itemId error', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
 
 
