@@ -1,36 +1,63 @@
-$(document).ready(function(){
+/**
+ * Register Page - Enhanced with apiClient and validation
+ */
 
-    // Handle Registration Button Click
-    $("#register").click(function() {
-      const name = $('#name').val();
-      const email = $('#email').val();
-      const country = $('#country').val();
-      const birthDate = $('#date').val();
-      const password = $('#password').val();
+$(document).ready(function() {
+  // Handle form submission
+  $('#registerForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    const name = $('#name').val().trim();
+    const email = $('#email').val().trim();
+    const birthDate = $('#birthDate').val();
+    const password = $('#password').val();
 
-      if(!name || !email || !country || !birthDate || !password){
-          alert("Enter all fields")
-          return;
-      }
+    // Validation
+    if (!name || !email || !birthDate || !password) {
+      UI.showToast('Please fill in all fields', 'error');
+      return;
+    }
 
-      const data = {
-        name,
-        email,
-        birthDate,
-        password
-      };
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      UI.showToast('Please enter a valid email address', 'error');
+      return;
+    }
 
-      $.ajax({
-        type: "POST",
-        url: '/api/v1/user',
-        data : data,
-        success: function(serverResponse) {
-            alert("successfully registered user")
-            location.href = '/';
-        },
-        error: function(errorResponse) {
-            alert(`Error Register User: ${errorResponse.responseText}`);
-        }
+    // Password validation (minimum 6 characters)
+    if (password.length < 6) {
+      UI.showToast('Password must be at least 6 characters long', 'error');
+      return;
+    }
+
+    // Show loading state
+    const $registerBtn = $('#register');
+    const originalText = $registerBtn.text();
+    $registerBtn.prop('disabled', true).text('Registering...');
+
+    // Prepare data
+    const data = {
+      name,
+      email,
+      birthDate,
+      password
+    };
+
+    // Make registration request
+    apiClient.post('/api/v1/user', data)
+      .done(function(response) {
+        // Success
+        UI.showToast('Successfully registered! Redirecting to login...', 'success');
+        
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1500);
+      })
+      .fail(function(xhr) {
+        // Error handling is done by apiClient, but reset button state
+        $registerBtn.prop('disabled', false).text(originalText);
       });
-    });      
   });
+});

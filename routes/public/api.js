@@ -63,7 +63,12 @@ function handlePublicBackendApi(app) {
         // In the response, set a cookie on the client with the name "session_cookie"
         // and the value as the UUID we generated. We also set the expiration time.
         axios.defaults.headers.common['Cookie'] = `session_token=${token};expires=${expiresAt}`;
-        return res.cookie("session_token", token, { expires: expiresAt }).status(200).send('login successful');
+        // Return user role for client-side redirect
+        return res.cookie("session_token", token, { expires: expiresAt }).status(200).json({
+          message: 'login successful',
+          role: user.role,
+          userId: user.userId
+        });
       } catch (e) {
         console.log(e.message);
         return res.status(400).send('Could not register user');
