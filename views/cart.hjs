@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - GIU Food-truck System</title>
+    <link rel="stylesheet" href="/styles/bootstrap.min.css" />
+    <link rel="stylesheet" href="/styles/style.css" />
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">GIU Food-truck</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/trucks">Trucks</a></li>
+                    <li class="active"><a href="/cart">Cart</a></li>
+                    <li><a href="/myOrders">My Orders</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="glass-card" style="margin-top: 30px;">
+                    <div class="text-center" style="margin-bottom: 40px;">
+                        <h1 style="margin-bottom: 10px;">Shopping Cart</h1>
+                        <p class="text-muted">Review your items before placing your order</p>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loadingState" class="text-center" style="display: none; padding: 40px;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <p class="text-muted" style="margin-top: 15px;">Loading cart...</p>
+                    </div>
+
+                    <!-- Cart Items Container -->
+                    <div id="cartContainer">
+                        <!-- Cart items will be loaded here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyState" class="text-center" style="display: none; padding: 40px;">
+                        <h3 style="margin-bottom: 15px; color: #ffa500;">🛒</h3>
+                        <h3 style="margin-bottom: 15px;">Your Cart is Empty</h3>
+                        <p class="text-muted">Add some delicious items from our food trucks!</p>
+                        <a href="/trucks" class="btn btn-primary" style="margin-top: 20px;">Browse Trucks</a>
+                    </div>
+
+                    <!-- Cart Summary and Checkout -->
+                    <div id="cartSummary" style="display: none; margin-top: 30px;">
+                        <div class="glass-card" style="background: rgba(255, 255, 255, 0.05);">
+                            <h3 style="margin-bottom: 20px;">Order Details</h3>
+
+                            <div class="form-group">
+                                <label for="pickupTime">Scheduled Pickup Time</label>
+                                <input type="datetime-local" class="form-control" id="pickupTime" required>
+                                <small class="text-muted">Select when you'd like to pick up your order</small>
+                            </div>
+
+                            <div
+                                style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                    <h4 style="margin: 0;">Total:</h4>
+                                    <h3 style="margin: 0; color: #ffa500;" id="totalPrice">$0.00</h3>
+                                </div>
+                                <button id="placeOrderBtn" class="btn btn-primary btn-block"
+                                    style="background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%) !important; padding: 15px; font-size: 1.1rem; font-weight: bold;">
+                                    Place Order
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery-2.2.0.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/src/apiClient.js"></script>
+    <script src="/src/ui.js"></script>
+    <script src="/src/cart.js"></script>
+</body>
+
+</html>

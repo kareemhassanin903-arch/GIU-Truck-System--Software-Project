@@ -47,6 +47,28 @@ function handlePrivateFrontEndView(app) {
         });
     });
 
+    app.get('/cart', async (req, res) => {
+        const user = await getUser(req);
+        if (user.role !== 'customer') {
+            return res.redirect('/dashboard');
+        }
+        return res.render('cart', {
+            user: user,
+            isCustomer: true
+        });
+    });
+
+    app.get('/myOrders', async (req, res) => {
+        const user = await getUser(req);
+        if (user.role !== 'customer') {
+            return res.redirect('/dashboard');
+        }
+        return res.render('myOrders', {
+            user: user,
+            isCustomer: true
+        });
+    });
+
     app.get('/testingAxios', async (req, res) => {
         try {
             const result = await axios.get(`http://localhost:${PORT}/test`);
