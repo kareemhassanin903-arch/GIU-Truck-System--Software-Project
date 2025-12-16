@@ -52,7 +52,7 @@ function handlePrivateBackendApi(app) {
       if (!user) return;
       if (!requireRole(user, res, 'truckOwner')) return;
 
-      const { name, price, description, category } = req.body || {};
+      const { name, price, description, category, status } = req.body || {};
 
       if (!name || price == null || !category) {
         return res.status(400).json({ error: 'Missing required fields' });
@@ -62,14 +62,20 @@ function handlePrivateBackendApi(app) {
         return res.status(400).json({ error: 'Truck not found for this owner' });
       }
 
-      await db('FoodTruck.MenuItems').insert({
+      const insertData = {
         truckId: user.truckId,
         name,
         price,
         description,
         category
-        // status & createdAt use defaults
-      });
+      };
+
+      // Add status if provided, otherwise default to 'available'
+      if (status && (status === 'available' || status === 'unavailable')) {
+        insertData.status = status;
+      }
+
+      await db('FoodTruck.MenuItems').insert(insertData);
 
       return res
         .status(200)
@@ -93,8 +99,9 @@ function handlePrivateBackendApi(app) {
         return res.status(400).json({ error: 'Truck not found for this owner' });
       }
 
+      // Show all menu items regardless of status for owner management
       const items = await db('FoodTruck.MenuItems')
-        .where({ truckId: user.truckId, status: 'available' })
+        .where({ truckId: user.truckId })
         .orderBy('itemId', 'asc');
 
       return res.status(200).json(items);
@@ -154,13 +161,16 @@ function handlePrivateBackendApi(app) {
         return res.status(400).json({ error: 'Truck not found for this owner' });
       }
 
-      const { name, price, category, description } = req.body || {};
+      const { name, price, category, description, status } = req.body || {};
       const updateData = {};
 
       if (name != null) updateData.name = name;
       if (price != null) updateData.price = price;
       if (category != null) updateData.category = category;
       if (description != null) updateData.description = description;
+      if (status != null && (status === 'available' || status === 'unavailable')) {
+        updateData.status = status;
+      }
 
       if (Object.keys(updateData).length === 0) {
         return res.status(400).json({ error: 'No fields to update' });

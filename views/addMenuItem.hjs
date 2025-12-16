@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Menu Item - GIU Food-truck System</title>
+  <link rel="stylesheet" href="/styles/bootstrap.min.css" />
+  <link rel="stylesheet" href="/styles/style.css" />
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">GIU Food-truck</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="/ownerDashboard">Owner Dashboard</a></li>
+          <li><a href="/menuItems">Menu Items</a></li>
+          <li class="active"><a href="/addMenuItem">Add Menu Item</a></li>
+          <li><a href="/truckOrders">Truck Orders</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <div class="glass-card" style="margin-top: 30px;">
+          <div class="text-center" style="margin-bottom: 40px;">
+            <h1 style="margin-bottom: 10px;">Add Menu Item</h1>
+            <p class="text-muted">Add a new item to your food truck menu</p>
+          </div>
+
+          <form id="addMenuItemForm">
+            <div class="form-group">
+              <label for="itemName">Item Name *</label>
+              <input type="text" class="form-control" id="itemName" placeholder="e.g., Classic Burger" required>
+            </div>
+
+            <div class="form-group">
+              <label for="itemCategory">Category *</label>
+              <input type="text" class="form-control" id="itemCategory" placeholder="e.g., Burgers, Drinks, Sides" required>
+            </div>
+
+            <div class="form-group">
+              <label for="itemPrice">Price ($) *</label>
+              <input type="number" step="0.01" min="0" class="form-control" id="itemPrice" placeholder="e.g., 9.99" required>
+            </div>
+
+            <div class="form-group">
+              <label for="itemDescription">Description</label>
+              <textarea class="form-control" id="itemDescription" rows="4" placeholder="Describe your menu item..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="itemStatus">Status *</label>
+              <select class="form-control" id="itemStatus" required>
+                <option value="available" selected>Available</option>
+                <option value="unavailable">Unavailable</option>
+              </select>
+              <small class="text-muted">Set whether this item is available for customers to order</small>
+            </div>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+              <button type="submit" class="btn btn-primary btn-block" id="submitBtn"
+                style="background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%) !important; padding: 15px; font-size: 1.1rem; font-weight: bold;">
+                Add Menu Item
+              </button>
+              <a href="/menuItems" class="btn btn-default btn-block" style="margin-top: 10px;">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/jquery-2.2.0.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/src/apiClient.js"></script>
+  <script src="/src/ui.js"></script>
+  <script src="/src/addMenuItem.js"></script>
+</body>
+
+</html>
+
