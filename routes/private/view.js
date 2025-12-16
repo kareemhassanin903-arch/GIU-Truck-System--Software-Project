@@ -8,8 +8,8 @@ function handlePrivateFrontEndView(app) {
 
     app.get('/dashboard', async (req, res) => {
         const user = await getUser(req);
-        if (user.role == "truckOwner") {
-            return res.render('truckOwnerHomePage');
+        if (user.role === 'truckOwner') {
+            return res.redirect('/ownerDashboard');
         }
         // role of customer
         return res.render('customerHomepage', {
@@ -67,6 +67,39 @@ function handlePrivateFrontEndView(app) {
             user: user,
             isCustomer: true
         });
+    });
+
+    // Owner routes
+    app.get('/ownerDashboard', async (req, res) => {
+        const user = await getUser(req);
+        if (user.role !== 'truckOwner') {
+            return res.redirect('/dashboard');
+        }
+        return res.render('ownerDashboard', { name: user.name });
+    });
+
+    app.get('/menuItems', async (req, res) => {
+        const user = await getUser(req);
+        if (user.role !== 'truckOwner') {
+            return res.redirect('/dashboard');
+        }
+        return res.render('menuItems');
+    });
+
+    app.get('/addMenuItem', async (req, res) => {
+        const user = await getUser(req);
+        if (user.role !== 'truckOwner') {
+            return res.redirect('/dashboard');
+        }
+        return res.render('addMenuItem');
+    });
+
+    app.get('/truckOrders', async (req, res) => {
+        const user = await getUser(req);
+        if (user.role !== 'truckOwner') {
+            return res.redirect('/dashboard');
+        }
+        return res.render('truckOrders');
     });
 
     app.get('/testingAxios', async (req, res) => {

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Dashboard - GIU Food-truck System</title>
+  <link rel="stylesheet" href="/styles/bootstrap.min.css" />
+  <link rel="stylesheet" href="/styles/style.css" />
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">GIU Food-truck</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/ownerDashboard">Owner Dashboard</a></li>
+          <li><a href="/menuItems">Menu Items</a></li>
+          <li><a href="/addMenuItem">Add Menu Item</a></li>
+          <li><a href="/truckOrders">Truck Orders</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="glass-card" style="margin-top: 30px;">
+          <div class="text-center" style="margin-bottom: 40px;">
+            <h1 style="margin-bottom: 10px;">Owner Dashboard</h1>
+            <p class="text-muted">Manage your food truck and orders</p>
+          </div>
+
+          <!-- Loading State -->
+          <div id="loadingState" class="text-center" style="display: none; padding: 40px;">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p class="text-muted" style="margin-top: 15px;">Loading dashboard...</p>
+          </div>
+
+          <!-- Truck Information -->
+          <div id="truckInfoSection" style="display: none;">
+            <div class="glass-card" style="background: rgba(255, 255, 255, 0.05); margin-bottom: 30px;">
+              <h2 style="margin-bottom: 30px;">Truck Information</h2>
+              <div class="row">
+                <div class="col-md-8">
+                  <div style="margin-bottom: 20px;">
+                    <h3 style="margin-top: 0; color: #ffa500; font-size: 2rem;" id="truckName">Loading...</h3>
+                    <p style="font-size: 1.1rem; margin-top: 10px;">
+                      <strong>Current Status:</strong> 
+                      <span id="orderStatus" class="badge" style="margin-left: 10px; padding: 8px 15px; font-size: 0.9rem;">Loading...</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group" style="margin-top: 20px;">
+                    <label style="display: block; margin-bottom: 15px; font-size: 1.1rem; color: rgba(255, 255, 255, 0.9);">
+                      Order Availability
+                    </label>
+                    <label class="toggle-switch" style="display: inline-block; cursor: pointer;">
+                      <input type="checkbox" id="availabilityToggle" style="display: none;">
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-label" id="toggleLabel">Unavailable</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row" style="margin-bottom: 30px;">
+              <div class="col-md-3 col-sm-6" style="margin-bottom: 20px;">
+                <div class="glass-card text-center" style="padding: 30px;">
+                  <h3 style="margin-top: 0; color: #ffa500; font-size: 2.5rem;" id="totalOrders">0</h3>
+                  <h4>Total Orders</h4>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6" style="margin-bottom: 20px;">
+                <div class="glass-card text-center" style="padding: 30px;">
+                  <h3 style="margin-top: 0; color: #ffa500; font-size: 2.5rem;" id="pendingOrders">0</h3>
+                  <h4>Pending Orders</h4>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6" style="margin-bottom: 20px;">
+                <div class="glass-card text-center" style="padding: 30px;">
+                  <h3 style="margin-top: 0; color: #ffa500; font-size: 2.5rem;" id="preparingOrders">0</h3>
+                  <h4>Preparing</h4>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6" style="margin-bottom: 20px;">
+                <div class="glass-card text-center" style="padding: 30px;">
+                  <h3 style="margin-top: 0; color: #ffa500; font-size: 2.5rem;" id="readyOrders">0</h3>
+                  <h4>Ready</h4>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="glass-card" style="background: rgba(255, 255, 255, 0.05);">
+              <h2 style="margin-bottom: 20px;">Recent Orders</h2>
+              <div id="recentOrdersContainer">
+                <!-- Orders will be loaded here -->
+              </div>
+              <div id="noOrdersMessage" class="text-center" style="display: none; padding: 40px;">
+                <p class="text-muted">No orders yet</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/jquery-2.2.0.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/src/apiClient.js"></script>
+  <script src="/src/ui.js"></script>
+  <script src="/src/ownerDashboard.js"></script>
+</body>
+
+</html>
+
