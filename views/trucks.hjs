@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Trucks - GIU Food-truck System</title>
+  <link rel="stylesheet" href="/styles/bootstrap.min.css" />
+  <link rel="stylesheet" href="/styles/style.css" />
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">GIU Food-truck</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li class="active"><a href="/trucks">Trucks</a></li>
+          <li><a href="/cart">Cart</a></li>
+          <li><a href="/myOrders">My Orders</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="glass-card" style="margin-top: 30px;">
+          <div class="text-center" style="margin-bottom: 40px;">
+            <h1 style="margin-bottom: 10px;">Browse Food Trucks</h1>
+            <p class="text-muted">Discover delicious food from our available trucks</p>
+          </div>
+
+          <!-- Loading State -->
+          <div id="loadingState" class="text-center" style="display: none; padding: 40px;">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p class="text-muted" style="margin-top: 15px;">Loading trucks...</p>
+          </div>
+
+          <!-- Trucks Container -->
+          <div id="trucksContainer" class="row">
+            <!-- Trucks will be loaded here -->
+          </div>
+
+          <!-- Empty State -->
+          <div id="emptyState" class="text-center" style="display: none; padding: 40px;">
+            <h3 style="margin-bottom: 15px;">No Trucks Available</h3>
+            <p class="text-muted">There are currently no food trucks available. Please check back later!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/jquery-2.2.0.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/src/apiClient.js"></script>
+  <script src="/src/ui.js"></script>
+  <script src="/src/trucks.js"></script>
+</body>
+
+</html>

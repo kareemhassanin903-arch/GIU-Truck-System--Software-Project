@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Truck Menu - GIU Food-truck System</title>
+  <link rel="stylesheet" href="/styles/bootstrap.min.css" />
+  <link rel="stylesheet" href="/styles/style.css" />
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">GIU Food-truck</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li class="active"><a href="/trucks">Trucks</a></li>
+          <li><a href="/cart">Cart</a></li>
+          <li><a href="/myOrders">My Orders</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="glass-card" style="margin-top: 30px;">
+          <div style="margin-bottom: 30px;">
+            <a href="/trucks" class="btn btn-secondary" style="margin-bottom: 20px;">← Back to Trucks</a>
+            <h1 id="truckName" style="margin-bottom: 10px;">Truck Menu</h1>
+            <p class="text-muted">Select items to add to your cart</p>
+          </div>
+
+          <!-- Category Filter Buttons -->
+          <div id="categoryFilters" style="margin-bottom: 30px; text-align: center;">
+            <button class="btn btn-primary category-filter active" data-category="all" style="margin: 5px;">
+              All
+            </button>
+            <!-- Categories will be dynamically added here -->
+          </div>
+
+          <!-- Loading State -->
+          <div id="loadingState" class="text-center" style="display: none; padding: 40px;">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p class="text-muted" style="margin-top: 15px;">Loading menu...</p>
+          </div>
+
+          <!-- Menu Items Container -->
+          <div id="menuItemsContainer" class="row">
+            <!-- Menu items will be loaded here -->
+          </div>
+
+          <!-- Empty State -->
+          <div id="emptyState" class="text-center" style="display: none; padding: 40px;">
+            <h3 style="margin-bottom: 15px;">No Menu Items Available</h3>
+            <p class="text-muted">This truck doesn't have any menu items available at the moment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/jquery-2.2.0.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/src/apiClient.js"></script>
+  <script src="/src/ui.js"></script>
+  <script src="/src/truckMenu.js"></script>
+</body>
+
+</html>

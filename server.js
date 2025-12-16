@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require("body-parser");
+const path = require('path');
 const {handlePrivateBackendApi} = require('./routes/private/api');
 const {handlePublicBackendApi} = require('./routes/public/api');
 const {handlePublicFrontEndView} = require('./routes/public/view');
@@ -11,7 +12,7 @@ const PORT = process.env.PORT || 3001;
 
 
 // view engine setup
-app.set('views', './views');
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hjs');
 app.use(express.static('./public'));
 

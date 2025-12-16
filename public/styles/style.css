@@ -176,6 +176,17 @@ a:hover {
   border-radius: 8px;
 }
 
+/* Category Filter Buttons */
+.category-filter.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border: none !important;
+  color: #fff !important;
+}
+
+.category-filter {
+  transition: all 0.3s;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .glass-card {
