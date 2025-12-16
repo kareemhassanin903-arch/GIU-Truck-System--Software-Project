@@ -1,32 +1,111 @@
 <!DOCTYPE html>
-<html>
-  <head>
-      <link rel='stylesheet' href='/styles/bootstrap.min.css' />
-      <link rel='stylesheet' href='/styles/style.css' />
-      <script src="/js/jquery-2.2.0.min.js" type="text/javascript"></script>
-      <script src="/js/bootstrap.min.js" type="text/javascript"></script>
-  </head>
-  <body>
-    <div>
-      <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="/">GIU Food-truck</a>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard - GIU Food-truck System</title>
+  <link rel="stylesheet" href="/styles/bootstrap.min.css" />
+  <link rel="stylesheet" href="/styles/style.css" />
+</head>
+
+<body>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">GIU Food-truck</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/trucks">Trucks</a></li>
+          <li><a href="/cart">Cart</a></li>
+          <li><a href="/myOrders">My Orders</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="glass-card" style="margin-top: 30px;">
+          <div class="text-center" style="margin-bottom: 40px;">
+            <h1 style="margin-bottom: 10px;">Welcome, {{ name }}!</h1>
+            <p class="text-muted">Discover delicious food trucks and place your orders</p>
           </div>
-          <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-              <li class="active"><a href="/dashboard">Home</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="/logout">Logout</a></li>
-            </ul>
+
+          <!-- Quick Action Cards -->
+          <div class="row" style="margin-bottom: 40px;">
+            <div class="col-md-3 col-sm-6" style="margin-bottom: 20px;">
+              <div class="glass-card text-center" style="padding: 30px; cursor: pointer; transition: transform 0.2s;"
+                onclick="window.location.href='/trucks'">
+                <h3 style="margin-top: 0; color: #ffa500; font-size: 3rem;">🍔</h3>
+                <h4>Browse Trucks</h4>
+                <p class="text-muted">Explore available food trucks</p>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6" style="margin-bottom: 20px;">
+              <div class="glass-card text-center" style="padding: 30px; cursor: pointer; transition: transform 0.2s;"
+                onclick="window.location.href='/cart'">
+                <h3 style="margin-top: 0; color: #ffa500; font-size: 3rem;">🛒</h3>
+                <h4>View Cart</h4>
+                <p class="text-muted">Check your cart items</p>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6" style="margin-bottom: 20px;">
+              <div class="glass-card text-center" style="padding: 30px; cursor: pointer; transition: transform 0.2s;"
+                onclick="window.location.href='/myOrders'">
+                <h3 style="margin-top: 0; color: #ffa500; font-size: 3rem;">📋</h3>
+                <h4>My Orders</h4>
+                <p class="text-muted">Track your orders</p>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6" style="margin-bottom: 20px;">
+              <div class="glass-card text-center" style="padding: 30px; cursor: pointer; transition: transform 0.2s;"
+                onclick="window.location.href='/logout'">
+                <h3 style="margin-top: 0; color: #ffa500; font-size: 3rem;">🚪</h3>
+                <h4>Logout</h4>
+                <p class="text-muted">Sign out of your account</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- How it Works Section -->
+          <div class="glass-card" style="background: rgba(255, 255, 255, 0.05); margin-top: 30px;">
+            <h2 style="margin-bottom: 30px; text-align: center;">How It Works</h2>
+            <div class="row">
+              <div class="col-md-4 text-center" style="margin-bottom: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">1</div>
+                <h4>Browse Trucks</h4>
+                <p class="text-muted">Explore available food trucks and their menus</p>
+              </div>
+              <div class="col-md-4 text-center" style="margin-bottom: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">2</div>
+                <h4>Add to Cart</h4>
+                <p class="text-muted">Select items you want and add them to your cart</p>
+              </div>
+              <div class="col-md-4 text-center" style="margin-bottom: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">3</div>
+                <h4>Place Order</h4>
+                <p class="text-muted">Review your cart and place your order with pickup time</p>
+              </div>
+            </div>
           </div>
         </div>
-      </nav>
+      </div>
     </div>
+  </div>
 
-    <div class="center">
-      <h1>Welcome customer {{ name }}</h1>
-    </div>
-  </body>
+  <script src="/js/jquery-2.2.0.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/src/apiClient.js"></script>
+  <script src="/src/ui.js"></script>
+  <script src="/src/customerHomepage.js"></script>
+</body>
+
 </html>
